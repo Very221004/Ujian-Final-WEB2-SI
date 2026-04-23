@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/layout :: header"></head>
+
+<body>
+
+<!-- Navbar -->
+<div th:replace="fragments/layout :: navbar"></div>
+
+<div class="container">
+
+    <!-- Title -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">📊 Dashboard</h2>
+    </div>
+
+    <!-- Cards -->
+    <div class="row g-4">
+
+        <!-- Total Produk -->
+        <div class="col-md-3">
+            <div class="card shadow border-0 text-white bg-primary">
+                <div class="card-body">
+                    <h6>Total Produk</h6>
+                    <h3 th:text="${totalProduk}"></h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Value -->
+        <div class="col-md-3">
+            <div class="card shadow border-0 text-white bg-success">
+                <div class="card-body">
+                    <h6>Total Inventory</h6>
+                    <h5 th:text="'Rp ' + ${#numbers.formatDecimal(totalValue,0,'POINT',0,'COMMA')}"></h5>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aktif -->
+        <div class="col-md-3">
+            <div class="card shadow border-0 text-white bg-info">
+                <div class="card-body">
+                    <h6>Produk Aktif</h6>
+                    <h3 th:text="${aktif}"></h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tidak Aktif -->
+        <div class="col-md-3">
+            <div class="card shadow border-0 text-white bg-secondary">
+                <div class="card-body">
+                    <h6>Tidak Aktif</h6>
+                    <h3 th:text="${tidakAktif}"></h3>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Kategori -->
+    <div class="card mt-5 shadow border-0">
+        <div class="card-body">
+            <h5 class="fw-bold mb-3">📂 Produk per Kategori</h5>
+
+            <div class="row">
+                <div class="col-md-3 mb-3" th:each="k : ${kategori}">
+                    <div class="card border-0 shadow-sm text-center">
+                        <div class="card-body">
+                            <h6 class="text-muted" th:text="${k.key}"></h6>
+                            <h4 th:text="${k.value}"></h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Low Stock -->
+    <div class="card mt-4 shadow border-0">
+        <div class="card-body">
+            <h5 class="fw-bold mb-3">⚠️ Low Stock (Stock &lt; 5)</h5>
+
+            <!-- Jika kosong -->
+            <div th:if="${#lists.isEmpty(lowStock)}" class="alert alert-success">
+                Semua stok aman 👍
+            </div>
+
+            <!-- Table -->
+            <div class="table-responsive" th:if="${!#lists.isEmpty(lowStock)}">
+                <table class="table table-hover">
+                    <thead class="table-danger">
+                    <tr>
+                        <th>Nama Produk</th>
+                        <th>Kategori</th>
+                        <th>Stock</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="p : ${lowStock}">
+                        <td th:text="${p.name}"></td>
+                        <td th:text="${p.category.displayName}"></td>
+                        <td>
+                            <span class="badge bg-danger" th:text="${p.stock}"></span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="text-center mt-4" th:if="${totalProduk == 0}">
+        <div class="alert alert-warning">
+            Belum ada produk, silakan tambahkan terlebih dahulu 🚀
+        </div>
+    </div>
+
+</div>
+
+<!-- Footer -->
+<div th:replace="fragments/layout :: footer"></div>
+
+</body>
+</html>
