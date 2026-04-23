@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/layout :: header"></head>
@@ -11,47 +12,45 @@
 
     <!-- Title -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold">📊 Dashboard</h2>
+        <h2 class="fw-bold">
+            <i class="bi bi-speedometer2 me-2"></i>Dashboard
+        </h2>
     </div>
 
     <!-- Cards -->
     <div class="row g-4">
 
-        <!-- Total Produk -->
         <div class="col-md-3">
             <div class="card shadow border-0 text-white bg-primary">
                 <div class="card-body">
-                    <h6>Total Produk</h6>
+                    <h6><i class="bi bi-box me-2"></i>Total Produk</h6>
                     <h3 th:text="${totalProduk}"></h3>
                 </div>
             </div>
         </div>
 
-        <!-- Total Value -->
         <div class="col-md-3">
             <div class="card shadow border-0 text-white bg-success">
                 <div class="card-body">
-                    <h6>Total Inventory</h6>
+                    <h6><i class="bi bi-cash-stack me-2"></i>Total Inventory</h6>
                     <h5 th:text="'Rp ' + ${#numbers.formatDecimal(totalValue,0,'POINT',0,'COMMA')}"></h5>
                 </div>
             </div>
         </div>
 
-        <!-- Aktif -->
         <div class="col-md-3">
             <div class="card shadow border-0 text-white bg-info">
                 <div class="card-body">
-                    <h6>Produk Aktif</h6>
+                    <h6><i class="bi bi-check-circle me-2"></i>Produk Aktif</h6>
                     <h3 th:text="${aktif}"></h3>
                 </div>
             </div>
         </div>
 
-        <!-- Tidak Aktif -->
         <div class="col-md-3">
             <div class="card shadow border-0 text-white bg-secondary">
                 <div class="card-body">
-                    <h6>Tidak Aktif</h6>
+                    <h6><i class="bi bi-x-circle me-2"></i>Tidak Aktif</h6>
                     <h3 th:text="${tidakAktif}"></h3>
                 </div>
             </div>
@@ -59,10 +58,25 @@
 
     </div>
 
-    <!-- Kategori -->
+    <!-- Chart -->
+    <div class="card mt-4 shadow border-0">
+        <div class="card-body">
+            <h5 class="fw-bold mb-3">
+                <i class="bi bi-pie-chart me-2"></i>Grafik Produk per Kategori
+            </h5>
+
+            <div style="max-width: 400px; margin: auto;">
+                <canvas id="kategoriChart"></canvas>
+            </div>
+
+        </div>
+    </div>
+    <!-- Produk per Kategori -->
     <div class="card mt-5 shadow border-0">
         <div class="card-body">
-            <h5 class="fw-bold mb-3">📂 Produk per Kategori</h5>
+            <h5 class="fw-bold mb-3">
+                <i class="bi bi-tags me-2"></i>Produk per Kategori
+            </h5>
 
             <div class="row">
                 <div class="col-md-3 mb-3" th:each="k : ${kategori}">
@@ -81,16 +95,16 @@
     <!-- Low Stock -->
     <div class="card mt-4 shadow border-0">
         <div class="card-body">
-            <h5 class="fw-bold mb-3">⚠️ Low Stock (Stock &lt; 5)</h5>
+            <h5 class="fw-bold mb-3">
+                <i class="bi bi-exclamation-triangle me-2"></i>Low Stock (Stock &lt; 5)
+            </h5>
 
-            <!-- Jika kosong -->
             <div th:if="${#lists.isEmpty(lowStock)}" class="alert alert-success">
                 Semua stok aman 👍
             </div>
 
-            <!-- Table -->
             <div class="table-responsive" th:if="${!#lists.isEmpty(lowStock)}">
-                <table class="table table-hover">
+                <table class="table table-hover align-middle">
                     <thead class="table-danger">
                     <tr>
                         <th>Nama Produk</th>
@@ -112,10 +126,11 @@
         </div>
     </div>
 
-    <!-- Empty State -->
+    <!-- Empty -->
     <div class="text-center mt-4" th:if="${totalProduk == 0}">
         <div class="alert alert-warning">
-            Belum ada produk, silakan tambahkan terlebih dahulu 🚀
+            <i class="bi bi-exclamation-circle me-2"></i>
+            Belum ada produk 🚀
         </div>
     </div>
 
@@ -123,6 +138,42 @@
 
 <!-- Footer -->
 <div th:replace="fragments/layout :: footer"></div>
+
+<!-- CHART JS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script th:inline="javascript">
+    const labels = [[${kategoriLabels}]];
+    const dataValues = [[${kategoriValues}]];
+
+    const ctx = document.getElementById('kategoriChart').getContext('2d');
+
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Jumlah Produk',
+                data: dataValues,
+                backgroundColor: [
+                    '#0d6efd',
+                    '#198754',
+                    '#ffc107',
+                    '#dc3545',
+                    '#6f42c1'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+</script>
 
 </body>
 </html>

@@ -23,6 +23,8 @@ public class DashboardController {
         model.addAttribute("tidakAktif", service.totalTidakAktif());
         model.addAttribute("kategori", service.kategori());
         model.addAttribute("lowStock", service.lowStock());
+        model.addAttribute("kategoriLabels", service.kategori().keySet());
+        model.addAttribute("kategoriValues", service.kategori().values());
 
         return "dashboard";
     }
