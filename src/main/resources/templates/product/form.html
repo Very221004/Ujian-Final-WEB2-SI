@@ -27,7 +27,10 @@
                         <label for="category" class="form-label">Kategori</label>
                         <select class="form-select" id="category" th:field="*{category}" required>
                             <option value="">-- Pilih Kategori --</option>
-                            <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat.displayName}">Kategori</option>
+                            <option th:each="c : ${categories}"
+                                    th:value="${c}"
+                                    th:text="${c.displayName}">
+                            </option>
                         </select>
                     </div>
 
