@@ -70,8 +70,23 @@
     </div>
 
     <!-- Empty -->
-    <div th:if="${#lists.isEmpty(products)}" class="text-center">
-        <p>Belum ada produk</p>
+    <div th:if="${#lists.isEmpty(products)}" class="text-center py-5">
+
+        <!-- Jika hasil search/filter kosong -->
+        <div th:if="${keyword != null or category != null}">
+            <p class="text-muted fs-5">
+                Tidak ada produk yang sesuai dengan pencarian / filter.
+            </p>
+        </div>
+
+        <!-- Jika memang belum ada data -->
+        <div th:if="${keyword == null and category == null}">
+            <p class="text-muted fs-5">Belum ada produk.</p>
+            <a th:href="@{/products/new}" class="btn btn-primary">
+                Tambah Produk Pertama
+            </a>
+        </div>
+
     </div>
 
     <!-- Pagination -->
