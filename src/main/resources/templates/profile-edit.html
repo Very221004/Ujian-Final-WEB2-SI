@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: header}"></head>
+<body>
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container">
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-8">
+
+            <h3 class="mb-4">
+                <i class="bi bi-pencil-square me-2"></i>Edit Profile
+            </h3>
+
+            <!-- Error Message -->
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+                <i class="bi bi-exclamation-circle me-2"></i>
+                <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div class="card shadow">
+                <div class="card-body">
+                    <form th:action="@{/profile/edit}" th:object="${profileRequest}" method="post">
+
+                        <!-- Profile Image URL -->
+                        <div class="mb-3">
+                            <label for="profileImageUrl" class="form-label">
+                                <i class="bi bi-image me-1"></i>URL Foto Profile
+                            </label>
+                            <input type="url" class="form-control" id="profileImageUrl"
+                                   th:field="*{profileImageUrl}"
+                                   placeholder="Masukkan URL gambar (https://...)">
+                            <div class="form-text">Masukkan link gambar dari internet</div>
+                        </div>
+
+                        <!-- Image Preview -->
+                        <div class="mb-3 text-center" id="imagePreviewContainer" style="display: none;">
+                            <img id="imagePreview" src="" alt="Preview"
+                                 class="rounded-circle img-thumbnail"
+                                 style="width: 120px; height: 120px; object-fit: cover;">
+                        </div>
+
+                        <hr>
+
+                        <!-- Full Name -->
+                        <div class="mb-3">
+                            <label for="fullName" class="form-label">
+                                <i class="bi bi-person me-1"></i>Nama Lengkap
+                            </label>
+                            <input type="text" class="form-control" id="fullName"
+                                   th:field="*{fullName}"
+                                   placeholder="Masukkan nama lengkap">
+                        </div>
+
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label for="email" class="form-label">
+                                <i class="bi bi-envelope me-1"></i>Email
+                            </label>
+                            <input type="email" class="form-control" id="email"
+                                   th:field="*{email}"
+                                   placeholder="Masukkan email">
+                        </div>
+
+                        <!-- Phone Number -->
+                        <div class="mb-3">
+                            <label for="phoneNumber" class="form-label">
+                                <i class="bi bi-telephone me-1"></i>No. Telepon
+                            </label>
+                            <input type="tel" class="form-control" id="phoneNumber"
+                                   th:field="*{phoneNumber}"
+                                   placeholder="Masukkan nomor telepon">
+                        </div>
+
+                        <!-- Address -->
+                        <div class="mb-3">
+                            <label for="address" class="form-label">
+                                <i class="bi bi-geo-alt me-1"></i>Alamat
+                            </label>
+                            <textarea class="form-control" id="address"
+                                      th:field="*{address}" rows="2"
+                                      placeholder="Masukkan alamat lengkap"></textarea>
+                        </div>
+
+                        <!-- Bio -->
+                        <div class="mb-3">
+                            <label for="bio" class="form-label">
+                                <i class="bi bi-chat-quote me-1"></i>Bio
+                            </label>
+                            <textarea class="form-control" id="bio"
+                                      th:field="*{bio}" rows="3"
+                                      placeholder="Ceritakan sedikit tentang diri Anda"></textarea>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle me-1"></i>Simpan Perubahan
+                            </button>
+                            <a th:href="@{/profile}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle me-1"></i>Batal
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+<script>
+    const profileImageUrlInput = document.getElementById('profileImageUrl');
+    const imagePreview = document.getElementById('imagePreview');
+    const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+
+    // Show preview on load if URL exists
+    if (profileImageUrlInput.value) {
+        imagePreview.src = profileImageUrlInput.value;
+        imagePreviewContainer.style.display = 'block';
+    }
+
+    // Show preview on input
+    profileImageUrlInput.addEventListener('input', function() {
+        const url = this.value.trim();
+        if (url) {
+            imagePreview.src = url;
+            imagePreviewContainer.style.display = 'block';
+        } else {
+            imagePreviewContainer.style.display = 'none';
+        }
+    });
+
+    // Handle image load error
+    imagePreview.addEventListener('error', function() {
+        this.src = 'https://via.placeholder.com/120x120?text=Invalid+URL';
+    });
+</script>
+
+</body>
+</html>

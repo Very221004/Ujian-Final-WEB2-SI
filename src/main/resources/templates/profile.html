@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: header}"></head>
+<body>
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container">
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-8">
+
+            <!-- Success Message -->
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+                <i class="bi bi-check-circle me-2"></i>
+                <span th:text="${success}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Profile Card -->
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-person-circle me-2"></i>User Profile
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Profile Image -->
+                        <div class="col-md-4 text-center mb-4">
+                            <div class="position-relative d-inline-block">
+                                <img th:if="${user.profileImageUrl != null && !user.profileImageUrl.isEmpty()}"
+                                     th:src="${user.profileImageUrl}"
+                                     class="rounded-circle img-thumbnail"
+                                     alt="Profile"
+                                     style="width: 180px; height: 180px; object-fit: cover;">
+                                <img th:unless="${user.profileImageUrl != null && !user.profileImageUrl.isEmpty()}"
+                                     th:src="@{/images/default-profile.png}"
+                                     class="rounded-circle img-thumbnail"
+                                     alt="Profile"
+                                     style="width: 180px; height: 180px; object-fit: cover;"
+                                     onerror="this.src='https://via.placeholder.com/180x180?text=No+Image'">
+                            </div>
+                        </div>
+
+                        <!-- Profile Info -->
+                        <div class="col-md-8">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <th class="text-muted" style="width: 150px;">
+                                        <i class="bi bi-person me-1"></i>Username
+                                    </th>
+                                    <td th:text="${user.username}">-</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-muted">
+                                        <i class="bi bi-person-badge me-1"></i>Nama Lengkap
+                                    </th>
+                                    <td>
+                                        <span th:if="${user.fullName != null && !user.fullName.isEmpty()}"
+                                              th:text="${user.fullName}">-</span>
+                                        <span th:unless="${user.fullName != null && !user.fullName.isEmpty()}"
+                                              class="text-muted fst-italic">Belum diisi</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="text-muted">
+                                        <i class="bi bi-envelope me-1"></i>Email
+                                    </th>
+                                    <td>
+                                        <span th:if="${user.email != null && !user.email.isEmpty()}"
+                                              th:text="${user.email}">-</span>
+                                        <span th:unless="${user.email != null && !user.email.isEmpty()}"
+                                              class="text-muted fst-italic">Belum diisi</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="text-muted">
+                                        <i class="bi bi-telephone me-1"></i>No. Telepon
+                                    </th>
+                                    <td>
+                                        <span th:if="${user.phoneNumber != null && !user.phoneNumber.isEmpty()}"
+                                              th:text="${user.phoneNumber}">-</span>
+                                        <span th:unless="${user.phoneNumber != null && !user.phoneNumber.isEmpty()}"
+                                              class="text-muted fst-italic">Belum diisi</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="text-muted">
+                                        <i class="bi bi-geo-alt me-1"></i>Alamat
+                                    </th>
+                                    <td>
+                                        <span th:if="${user.address != null && !user.address.isEmpty()}"
+                                              th:text="${user.address}">-</span>
+                                        <span th:unless="${user.address != null && !user.address.isEmpty()}"
+                                              class="text-muted fst-italic">Belum diisi</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="text-muted">
+                                        <i class="bi bi-chat-quote me-1"></i>Bio
+                                    </th>
+                                    <td>
+                                        <span th:if="${user.bio != null && !user.bio.isEmpty()}"
+                                              th:text="${user.bio}">-</span>
+                                        <span th:unless="${user.bio != null && !user.bio.isEmpty()}"
+                                              class="text-muted fst-italic">Belum diisi</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="card-footer bg-light">
+                    <div class="d-flex gap-2">
+                        <a th:href="@{/profile/edit}" class="btn btn-warning">
+                            <i class="bi bi-pencil me-1"></i>Edit Profile
+                        </a>
+                        <a th:href="@{/change-password}" class="btn btn-outline-primary">
+                            <i class="bi bi-key me-1"></i>Change Password
+                        </a>
+                        <a th:href="@{/products}" class="btn btn-secondary ms-auto">
+                            <i class="bi bi-arrow-left me-1"></i>Kembali
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

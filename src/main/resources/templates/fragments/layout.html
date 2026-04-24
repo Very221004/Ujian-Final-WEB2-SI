@@ -31,13 +31,35 @@
                     <a class="nav-link" th:href="@{/dashboard}">Dashboard</a>
                 </li>
             </ul>
-            <div class="d-flex align-items-center" sec:authorize="isAuthenticated()">
-                <span class="text-light me-3">
-                    Halo, <strong th:text="${#authentication.name}">User</strong>
-                </span>
-                <form th:action="@{/logout}" method="post" class="d-inline">
-                    <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
-                </form>
+            <div sec:authorize="isAuthenticated()">
+                <!-- Profile Dropdown -->
+                <div class="dropdown">
+                    <a class="btn btn-outline-light dropdown-toggle d-flex align-items-center"
+                       href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle me-2"></i>
+                        <span th:text="${#authentication.name}">User</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item" th:href="@{/profile}">
+                                <i class="bi bi-person me-2"></i>Profile
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" th:href="@{/change-password}">
+                                <i class="bi bi-key me-2"></i>Change Password
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form th:action="@{/logout}" method="post">
+                                <button type="submit" class="dropdown-item text-danger">
+                                    <i class="bi bi-box-arrow-right me-2"></i>Logout
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
