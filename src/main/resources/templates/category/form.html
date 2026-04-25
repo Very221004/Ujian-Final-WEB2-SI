@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: header}"></head>
+<body>
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <h2 class="mb-4">
+                <i class="bi bi-tag me-2"></i>
+                <span th:text="${isEdit} ? 'Edit Kategori' : 'Tambah Kategori Baru'">Form Kategori</span>
+            </h2>
+
+            <!-- Alert Messages -->
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+                <i class="bi bi-check-circle me-2"></i>
+                <span th:text="${success}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+                <i class="bi bi-exclamation-circle me-2"></i>
+                <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div class="card shadow">
+                <div class="card-body">
+                    <form th:action="@{/categories/save}" th:object="${categoryRequest}" method="post">
+
+                        <!-- Hidden ID for edit -->
+                        <input type="hidden" name="id" th:value="${categoryId}">
+
+                        <!-- Nama Kategori -->
+                        <div class="mb-3">
+                            <label for="name" class="form-label">
+                                <i class="bi bi-tag me-1"></i>Nama Kategori <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="name" th:field="*{name}"
+                                   placeholder="Masukkan nama kategori" required autofocus>
+                            <div class="form-text">Contoh: Elektronik, Makanan, Pakaian, dll.</div>
+                        </div>
+
+                        <!-- Deskripsi -->
+                        <div class="mb-3">
+                            <label for="description" class="form-label">
+                                <i class="bi bi-text-paragraph me-1"></i>Deskripsi
+                                <span class="text-muted">(opsional)</span>
+                            </label>
+                            <textarea class="form-control" id="description" th:field="*{description}"
+                                      rows="3" placeholder="Masukkan deskripsi kategori"></textarea>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle me-1"></i>
+                                <span th:text="${isEdit} ? 'Simpan Perubahan' : 'Tambah Kategori'">Simpan</span>
+                            </button>
+                            <a th:href="@{/categories}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left me-1"></i>Kembali
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

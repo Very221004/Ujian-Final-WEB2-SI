@@ -20,18 +20,21 @@
         </div>
 
         <div class="col-md-3">
-            <select name="category" class="form-select">
+            <select name="categoryId" class="form-select">
                 <option value="">Semua Kategori</option>
-                <option th:each="c : ${T(com.example.productcrud.model.Category).values()}"
-                        th:value="${c}"
-                        th:text="${c.displayName}"
-                        th:selected="${c == category}">
+                <option th:each="c : ${userCategories}"
+                        th:value="${c.id}"
+                        th:text="${c.name}"
+                        th:selected="${c.id == categoryId}">
                 </option>
             </select>
         </div>
 
         <div class="col-md-2">
             <button class="btn btn-primary w-100">Search</button>
+        </div>
+        <div class="col-md-1">
+            <a th:href="@{/products}" class="btn btn-outline-secondary w-100">Reset</a>
         </div>
     </form>
 
@@ -57,7 +60,13 @@
             <tr th:each="p, stat : ${products}">
                 <td th:text="${stat.index + 1 + (currentPage * 10)}"></td>
                 <td th:text="${p.name}"></td>
-                <td th:text="${p.category.displayName}"></td>
+                <td>
+                    <span th:if="${p.category != null}"
+                          class="badge bg-info"
+                          th:text="${p.category.name}">-</span>
+                    <span th:unless="${p.category != null}"
+                          class="text-muted">-</span>
+                </td>
                 <td th:text="'Rp ' + ${#numbers.formatDecimal(p.price,0,'POINT',0,'COMMA')}"></td>
                 <td th:text="${p.stock}"></td>
                 <td>
@@ -73,14 +82,14 @@
     <div th:if="${#lists.isEmpty(products)}" class="text-center py-5">
 
         <!-- Jika hasil search/filter kosong -->
-        <div th:if="${keyword != null or category != null}">
+        <div th:if="${keyword != null or categoryId != null}">
             <p class="text-muted fs-5">
                 Tidak ada produk yang sesuai dengan pencarian / filter.
             </p>
         </div>
 
         <!-- Jika memang belum ada data -->
-        <div th:if="${keyword == null and category == null}">
+        <div th:if="${keyword == null and categoryId == null}">
             <p class="text-muted fs-5">Belum ada produk.</p>
             <a th:href="@{/products/new}" class="btn btn-primary">
                 Tambah Produk Pertama
@@ -95,7 +104,7 @@
 
             <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
                 <a class="page-link"
-                   th:href="@{/products(page=${currentPage-1}, keyword=${keyword}, category=${category})}">
+                   th:href="@{/products(page=${currentPage-1}, keyword=${keyword}, categoryId=${categoryId})}">
                     Previous
                 </a>
             </li>
@@ -106,14 +115,14 @@
 
                 <a class="page-link"
                    th:text="${i+1}"
-                   th:href="@{/products(page=${i}, keyword=${keyword}, category=${category})}">
+                   th:href="@{/products(page=${i}, keyword=${keyword}, categoryId=${categoryId})}">
                 </a>
             </li>
 
             <li class="page-item"
                 th:classappend="${currentPage == totalPages-1} ? 'disabled'">
                 <a class="page-link"
-                   th:href="@{/products(page=${currentPage+1}, keyword=${keyword}, category=${category})}">
+                   th:href="@{/products(page=${currentPage+1}, keyword=${keyword}, categoryId=${categoryId})}">
                     Next
                 </a>
             </li>
@@ -127,4 +136,3 @@
 
 </body>
 </html>
-```

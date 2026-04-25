@@ -4,6 +4,7 @@ import com.example.productcrud.model.Category;
 import com.example.productcrud.model.Product;
 import com.example.productcrud.model.User;
 import com.example.productcrud.repository.UserRepository;
+import com.example.productcrud.service.CategoryService;
 import com.example.productcrud.service.ProductService;
 
 import java.time.LocalDate;
@@ -25,14 +26,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class ProductController {
 
     private final ProductService productService;
+    private final CategoryService categoryService;
     private final UserRepository userRepository;
 
-    public ProductController(ProductService productService, UserRepository userRepository) {
+    public ProductController(ProductService productService, CategoryService categoryService, UserRepository userRepository) {
         this.productService = productService;
+        this.categoryService = categoryService;
         this.userRepository = userRepository;
     }
 
-    // Ambil user login
     private User getCurrentUser(UserDetails userDetails) {
         return userRepository.findByUsername(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("User tidak ditemukan"));
@@ -43,16 +45,13 @@ public class ProductController {
         return "redirect:/products";
     }
 
-    // ================================
-    // LIST + PAGINATION + SEARCH + FILTER
-    // ================================
     @GetMapping("/products")
     public String listProducts(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) Category category,
+            @RequestParam(required = false) Long categoryId,
             Model model
     ) {
 
@@ -61,7 +60,7 @@ public class ProductController {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
 
         Page<Product> productPage = productService
-                .getProductsByUser(currentUser, keyword, category, pageable);
+                .getProductsByUser(currentUser, keyword, categoryId, pageable);
 
         model.addAttribute("products", productPage.getContent());
         model.addAttribute("productPage", productPage);
@@ -71,14 +70,14 @@ public class ProductController {
         model.addAttribute("totalItems", productPage.getTotalElements());
 
         model.addAttribute("keyword", keyword);
-        model.addAttribute("category", category);
+        model.addAttribute("categoryId", categoryId);
+
+        // Ambil semua kategori milik user untuk dropdown filter
+        model.addAttribute("userCategories", categoryService.findAllByOwner(currentUser));
 
         return "product/list";
     }
 
-    // ================================
-    // DETAIL
-    // ================================
     @GetMapping("/products/{id}")
     public String detailProduct(@PathVariable Long id,
                                 @AuthenticationPrincipal UserDetails userDetails,
@@ -98,23 +97,20 @@ public class ProductController {
                 });
     }
 
-    // ================================
-    // FORM CREATE
-    // ================================
     @GetMapping("/products/new")
-    public String showCreateForm(Model model) {
+    public String showCreateForm(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        User currentUser = getCurrentUser(userDetails);
+
         Product product = new Product();
         product.setCreatedAt(LocalDate.now());
 
         model.addAttribute("product", product);
-        model.addAttribute("categories", Category.values());
+        // Ambil kategori milik user untuk dropdown
+        model.addAttribute("userCategories", categoryService.findAllByOwner(currentUser));
 
         return "product/form";
     }
 
-    // ================================
-    // SAVE (CREATE + UPDATE)
-    // ================================
     @PostMapping("/products/save")
     public String saveProduct(@ModelAttribute Product product,
                               @AuthenticationPrincipal UserDetails userDetails,
@@ -123,14 +119,22 @@ public class ProductController {
         User currentUser = getCurrentUser(userDetails);
 
         try {
-
-            // VALIDASI SEDERHANA
             if (product.getName() == null || product.getName().isEmpty()) {
                 redirectAttributes.addFlashAttribute("errorMessage", "Nama produk tidak boleh kosong!");
                 return "redirect:/products/new";
             }
 
-            // CEK OWNER (EDIT)
+            // Validasi kategori milik user
+            if (product.getCategory() != null && product.getCategory().getId() != null) {
+                boolean isCategoryOwner = categoryService
+                        .findByIdAndOwner(product.getCategory().getId(), currentUser)
+                        .isPresent();
+                if (!isCategoryOwner) {
+                    redirectAttributes.addFlashAttribute("errorMessage", "Kategori tidak valid!");
+                    return "redirect:/products/new";
+                }
+            }
+
             if (product.getId() != null) {
                 boolean isOwner = productService
                         .findByIdAndOwner(product.getId(), currentUser)
@@ -142,10 +146,8 @@ public class ProductController {
                 }
             }
 
-            // WAJIB SET OWNER
             product.setOwner(currentUser);
 
-            // SET TANGGAL JIKA NULL
             if (product.getCreatedAt() == null) {
                 product.setCreatedAt(LocalDate.now());
             }
@@ -161,9 +163,6 @@ public class ProductController {
         }
     }
 
-    // ================================
-    // EDIT
-    // ================================
     @GetMapping("/products/{id}/edit")
     public String showEditForm(@PathVariable Long id,
                                @AuthenticationPrincipal UserDetails userDetails,
@@ -175,7 +174,8 @@ public class ProductController {
         return productService.findByIdAndOwner(id, currentUser)
                 .map(product -> {
                     model.addAttribute("product", product);
-                    model.addAttribute("categories", Category.values());
+                    // Ambil kategori milik user untuk dropdown
+                    model.addAttribute("userCategories", categoryService.findAllByOwner(currentUser));
                     return "product/form";
                 })
                 .orElseGet(() -> {
@@ -184,9 +184,6 @@ public class ProductController {
                 });
     }
 
-    // ================================
-    // DELETE
-    // ================================
     @PostMapping("/products/{id}/delete")
     public String deleteProduct(@PathVariable Long id,
                                 @AuthenticationPrincipal UserDetails userDetails,

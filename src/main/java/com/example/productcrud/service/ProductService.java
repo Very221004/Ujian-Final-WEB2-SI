@@ -15,9 +15,11 @@ import java.util.Optional;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final CategoryService categoryService;
 
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, CategoryService categoryService) {
         this.productRepository = productRepository;
+        this.categoryService = categoryService;
     }
 
     public List<Product> findAllByOwner(User owner) {
@@ -37,17 +39,21 @@ public class ProductService {
                 .ifPresent(productRepository::delete);
     }
 
-    // 🔥 PAGINATION + SEARCH + FILTER
-    public Page<Product> getProductsByUser(User user, String keyword, Category category, Pageable pageable) {
-
-        if (keyword != null && !keyword.isEmpty() && category != null) {
-            return productRepository.findByOwnerAndNameContainingIgnoreCaseAndCategory(user, keyword, category, pageable);
-        } else if (keyword != null && !keyword.isEmpty()) {
-            return productRepository.findByOwnerAndNameContainingIgnoreCase(user, keyword, pageable);
-        } else if (category != null) {
-            return productRepository.findByOwnerAndCategory(user, category, pageable);
-        } else {
-            return productRepository.findByOwner(user, pageable);
+    public Page<Product> getProductsByUser(User user, String keyword, Long categoryId, Pageable pageable) {
+        if (categoryId != null) {
+            Category category = categoryService.findByIdAndOwner(categoryId, user).orElse(null);
+            if (category != null) {
+                if (keyword != null && !keyword.isEmpty()) {
+                    return productRepository.findByOwnerAndNameContainingIgnoreCaseAndCategory(user, keyword, category, pageable);
+                }
+                return productRepository.findByOwnerAndCategory(user, category, pageable);
+            }
         }
+
+        if (keyword != null && !keyword.isEmpty()) {
+            return productRepository.findByOwnerAndNameContainingIgnoreCase(user, keyword, pageable);
+        }
+
+        return productRepository.findByOwner(user, pageable);
     }
 }
