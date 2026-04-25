@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/layout :: header}"></head>
@@ -7,12 +8,13 @@
 
 <div class="container">
 
+    <!-- HEADER -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Daftar Produk</h2>
         <a th:href="@{/products/new}" class="btn btn-success">+ Tambah Produk</a>
     </div>
 
-    <!-- Search & Filter -->
+    <!-- SEARCH & FILTER -->
     <form method="get" th:action="@{/products}" class="row g-2 mb-3">
         <div class="col-md-4">
             <input type="text" name="keyword" class="form-control"
@@ -33,19 +35,20 @@
         <div class="col-md-2">
             <button class="btn btn-primary w-100">Search</button>
         </div>
+
         <div class="col-md-1">
             <a th:href="@{/products}" class="btn btn-outline-secondary w-100">Reset</a>
         </div>
     </form>
 
-    <!-- Total -->
+    <!-- TOTAL DATA -->
     <p class="text-muted">
-        Total data: <strong th:text="${totalItems}"></strong>
+        Total data: <strong th:text="${totalItems}">0</strong>
     </p>
 
-    <!-- Table -->
+    <!-- TABLE -->
     <div th:if="${!#lists.isEmpty(products)}">
-        <table class="table table-striped">
+        <table class="table table-striped table-hover">
             <thead class="table-dark">
             <tr>
                 <th>No</th>
@@ -54,41 +57,75 @@
                 <th>Harga</th>
                 <th>Stok</th>
                 <th>Status</th>
+                <th>Aksi</th>
             </tr>
             </thead>
+
             <tbody>
             <tr th:each="p, stat : ${products}">
-                <td th:text="${stat.index + 1 + (currentPage * 10)}"></td>
-                <td th:text="${p.name}"></td>
+                <td th:text="${stat.index + 1 + (currentPage * 10)}">1</td>
+
+                <td th:text="${p.name}">Nama</td>
+
+                <!-- CATEGORY SAFE -->
                 <td>
                     <span th:if="${p.category != null}"
                           class="badge bg-info"
-                          th:text="${p.category.name}">-</span>
+                          th:text="${p.category.name}">Kategori</span>
+
                     <span th:unless="${p.category != null}"
                           class="text-muted">-</span>
                 </td>
-                <td th:text="'Rp ' + ${#numbers.formatDecimal(p.price,0,'POINT',0,'COMMA')}"></td>
-                <td th:text="${p.stock}"></td>
+
+                <td th:text="'Rp ' + ${#numbers.formatDecimal(p.price,0,'POINT',0,'COMMA')}">
+                    Rp 0
+                </td>
+
+                <td th:text="${p.stock}">0</td>
+
+                <!-- STATUS -->
                 <td>
                     <span th:if="${p.active}" class="badge bg-success">Aktif</span>
                     <span th:unless="${p.active}" class="badge bg-danger">Tidak Aktif</span>
+                </td>
+
+                <td>
+                    <a th:href="@{/products/{id}(id=${p.id})}"
+                       class="btn btn-info btn-sm me-1">
+                        Detail
+                    </a>
+
+                    <a th:href="@{/products/{id}/edit(id=${p.id})}"
+                       class="btn btn-warning btn-sm me-1">
+                        Edit
+                    </a>
+
+                    <form th:action="@{/products/{id}/delete(id=${p.id})}"
+                          method="post"
+                          style="display:inline;"
+                          onsubmit="return confirm('Yakin hapus produk ini?');">
+
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            Hapus
+                        </button>
+                    </form>
                 </td>
             </tr>
             </tbody>
         </table>
     </div>
 
-    <!-- Empty -->
+    <!-- EMPTY STATE -->
     <div th:if="${#lists.isEmpty(products)}" class="text-center py-5">
 
-        <!-- Jika hasil search/filter kosong -->
+        <!-- Jika hasil search kosong -->
         <div th:if="${keyword != null or categoryId != null}">
             <p class="text-muted fs-5">
                 Tidak ada produk yang sesuai dengan pencarian / filter.
             </p>
         </div>
 
-        <!-- Jika memang belum ada data -->
+        <!-- Jika belum ada data -->
         <div th:if="${keyword == null and categoryId == null}">
             <p class="text-muted fs-5">Belum ada produk.</p>
             <a th:href="@{/products/new}" class="btn btn-primary">
@@ -98,17 +135,20 @@
 
     </div>
 
-    <!-- Pagination -->
+    <!-- PAGINATION -->
     <nav th:if="${totalPages > 1}">
         <ul class="pagination justify-content-center">
 
-            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+            <!-- PREVIOUS -->
+            <li class="page-item"
+                th:classappend="${currentPage == 0} ? 'disabled'">
                 <a class="page-link"
                    th:href="@{/products(page=${currentPage-1}, keyword=${keyword}, categoryId=${categoryId})}">
                     Previous
                 </a>
             </li>
 
+            <!-- NUMBER -->
             <li class="page-item"
                 th:each="i : ${#numbers.sequence(0, totalPages-1)}"
                 th:classappend="${i == currentPage} ? 'active'">
@@ -119,6 +159,7 @@
                 </a>
             </li>
 
+            <!-- NEXT -->
             <li class="page-item"
                 th:classappend="${currentPage == totalPages-1} ? 'disabled'">
                 <a class="page-link"
@@ -136,3 +177,4 @@
 
 </body>
 </html>
+```
