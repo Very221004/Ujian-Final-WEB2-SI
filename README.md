@@ -44,7 +44,7 @@ src/main/resources/
 ### 1. Clone repository
 
 ```bash
-git clone https://github.com/<username>/product-crud.git
+git clone https://github.com/Very221004/Ujian-Final-WEB2-SI.git
 cd product-crud
 ```
 
@@ -61,10 +61,10 @@ cp .env.example .env
 ```
 
 ```env
-PGHOST=your-database-host
-PGUSER=your-username
-PGDATABASE=your-database-name
-PGPASSWORD=your-password
+PGHOST=ep-silent-king-a46o1zas-pooler.us-east-1.aws.neon.tech
+PGUSER=neondb_owner
+PGDATABASE=neondb
+PGPASSWORD=npg_XlyQ1NtF2uTG
 ```
 
 ### 4. Jalankan aplikasi
