@@ -1,137 +1,133 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/layout :: header}"></head>
-<body>
+<body class="bg-gray-50 min-h-screen flex flex-col">
 
 <nav th:replace="~{fragments/layout :: navbar}"></nav>
 
-<div class="container">
-    <div class="row justify-content-center mt-4">
-        <div class="col-md-8">
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
 
-            <!-- Success Message -->
-            <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
-                <i class="bi bi-check-circle me-2"></i>
-                <span th:text="${success}"></span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <!-- Success Message -->
+    <div th:if="${success}" class="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl">
+        <div class="flex items-center space-x-3">
+            <i data-lucide="check-circle" class="w-5 h-5 text-green-600 flex-shrink-0"></i>
+            <p class="text-sm text-green-700" th:text="${success}"></p>
+        </div>
+    </div>
+
+    <!-- Profile Card -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+
+        <!-- Header -->
+        <div class="gradient-primary px-8 py-6">
+            <div class="flex items-center space-x-3">
+                <i data-lucide="user-circle" class="w-6 h-6 text-white"></i>
+                <h1 class="text-xl font-semibold text-white">User Profile</h1>
             </div>
+        </div>
 
-            <!-- Profile Card -->
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">
-                        <i class="bi bi-person-circle me-2"></i>User Profile
-                    </h4>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <!-- Profile Image -->
-                        <div class="col-md-4 text-center mb-4">
-                            <div class="position-relative d-inline-block">
-                                <img th:if="${user.profileImageUrl != null && !user.profileImageUrl.isEmpty()}"
-                                     th:src="${user.profileImageUrl}"
-                                     class="rounded-circle img-thumbnail"
-                                     alt="Profile"
-                                     style="width: 180px; height: 180px; object-fit: cover;">
-                                <img th:unless="${user.profileImageUrl != null && !user.profileImageUrl.isEmpty()}"
-                                     th:src="@{/images/default-profile.png}"
-                                     class="rounded-circle img-thumbnail"
-                                     alt="Profile"
-                                     style="width: 180px; height: 180px; object-fit: cover;"
-                                     onerror="this.src='https://via.placeholder.com/180x180?text=No+Image'">
-                            </div>
-                        </div>
+        <div class="p-8">
+            <div class="flex flex-col md:flex-row gap-8">
 
-                        <!-- Profile Info -->
-                        <div class="col-md-8">
-                            <table class="table table-borderless">
-                                <tr>
-                                    <th class="text-muted" style="width: 150px;">
-                                        <i class="bi bi-person me-1"></i>Username
-                                    </th>
-                                    <td th:text="${user.username}">-</td>
-                                </tr>
-                                <tr>
-                                    <th class="text-muted">
-                                        <i class="bi bi-person-badge me-1"></i>Nama Lengkap
-                                    </th>
-                                    <td>
-                                        <span th:if="${user.fullName != null && !user.fullName.isEmpty()}"
-                                              th:text="${user.fullName}">-</span>
-                                        <span th:unless="${user.fullName != null && !user.fullName.isEmpty()}"
-                                              class="text-muted fst-italic">Belum diisi</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th class="text-muted">
-                                        <i class="bi bi-envelope me-1"></i>Email
-                                    </th>
-                                    <td>
-                                        <span th:if="${user.email != null && !user.email.isEmpty()}"
-                                              th:text="${user.email}">-</span>
-                                        <span th:unless="${user.email != null && !user.email.isEmpty()}"
-                                              class="text-muted fst-italic">Belum diisi</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th class="text-muted">
-                                        <i class="bi bi-telephone me-1"></i>No. Telepon
-                                    </th>
-                                    <td>
-                                        <span th:if="${user.phoneNumber != null && !user.phoneNumber.isEmpty()}"
-                                              th:text="${user.phoneNumber}">-</span>
-                                        <span th:unless="${user.phoneNumber != null && !user.phoneNumber.isEmpty()}"
-                                              class="text-muted fst-italic">Belum diisi</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th class="text-muted">
-                                        <i class="bi bi-geo-alt me-1"></i>Alamat
-                                    </th>
-                                    <td>
-                                        <span th:if="${user.address != null && !user.address.isEmpty()}"
-                                              th:text="${user.address}">-</span>
-                                        <span th:unless="${user.address != null && !user.address.isEmpty()}"
-                                              class="text-muted fst-italic">Belum diisi</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th class="text-muted">
-                                        <i class="bi bi-chat-quote me-1"></i>Bio
-                                    </th>
-                                    <td>
-                                        <span th:if="${user.bio != null && !user.bio.isEmpty()}"
-                                              th:text="${user.bio}">-</span>
-                                        <span th:unless="${user.bio != null && !user.bio.isEmpty()}"
-                                              class="text-muted fst-italic">Belum diisi</span>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
+                <!-- Profile Image -->
+                <div class="flex flex-col items-center">
+                    <div class="w-44 h-44 rounded-2xl overflow-hidden shadow-lg border-4 border-white">
+                        <img th:if="${user.profileImageUrl != null && !user.profileImageUrl.isEmpty()}"
+                             th:src="${user.profileImageUrl}"
+                             class="w-full h-full object-cover"
+                             alt="Profile"
+                             onerror="this.src='https://ui-avatars.com/api/?name=U&background=14532d&color=fff&size=200'">
+                        <img th:unless="${user.profileImageUrl != null && !user.profileImageUrl.isEmpty()}"
+                             th:src="@{https://ui-avatars.com/api/?name=${user.username}&background=14532d&color=fff&size=200}"
+                             class="w-full h-full object-cover"
+                             alt="Profile">
                     </div>
                 </div>
 
-                <!-- Action Buttons -->
-                <div class="card-footer bg-light">
-                    <div class="d-flex gap-2">
-                        <a th:href="@{/profile/edit}" class="btn btn-warning">
-                            <i class="bi bi-pencil me-1"></i>Edit Profile
-                        </a>
-                        <a th:href="@{/change-password}" class="btn btn-outline-primary">
-                            <i class="bi bi-key me-1"></i>Change Password
-                        </a>
-                        <a th:href="@{/products}" class="btn btn-secondary ms-auto">
-                            <i class="bi bi-arrow-left me-1"></i>Kembali
-                        </a>
+                <!-- Profile Info -->
+                <div class="flex-1">
+                    <div class="grid sm:grid-cols-2 gap-x-8 gap-y-6">
+                        <div>
+                            <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Username</label>
+                            <p class="mt-1 text-gray-900 font-medium" th:text="${user.username}">-</p>
+                        </div>
+
+                        <div>
+                            <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Nama Lengkap</label>
+                            <p class="mt-1">
+                                <span th:if="${user.fullName != null && !user.fullName.isEmpty()}"
+                                      class="text-gray-900" th:text="${user.fullName}">-</span>
+                                <span th:unless="${user.fullName != null && !user.fullName.isEmpty()}"
+                                      class="text-gray-400 italic">Belum diisi</span>
+                            </p>
+                        </div>
+
+                        <div>
+                            <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Email</label>
+                            <p class="mt-1">
+                                <span th:if="${user.email != null && !user.email.isEmpty()}"
+                                      class="text-gray-900" th:text="${user.email}">-</span>
+                                <span th:unless="${user.email != null && !user.email.isEmpty()}"
+                                      class="text-gray-400 italic">Belum diisi</span>
+                            </p>
+                        </div>
+
+                        <div>
+                            <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">No. Telepon</label>
+                            <p class="mt-1">
+                                <span th:if="${user.phoneNumber != null && !user.phoneNumber.isEmpty()}"
+                                      class="text-gray-900" th:text="${user.phoneNumber}">-</span>
+                                <span th:unless="${user.phoneNumber != null && !user.phoneNumber.isEmpty()}"
+                                      class="text-gray-400 italic">Belum diisi</span>
+                            </p>
+                        </div>
+
+                        <div class="sm:col-span-2">
+                            <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Alamat</label>
+                            <p class="mt-1">
+                                <span th:if="${user.address != null && !user.address.isEmpty()}"
+                                      class="text-gray-900" th:text="${user.address}">-</span>
+                                <span th:unless="${user.address != null && !user.address.isEmpty()}"
+                                      class="text-gray-400 italic">Belum diisi</span>
+                            </p>
+                        </div>
+
+                        <div class="sm:col-span-2">
+                            <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Bio</label>
+                            <p class="mt-1">
+                                <span th:if="${user.bio != null && !user.bio.isEmpty()}"
+                                      class="text-gray-900" th:text="${user.bio}">-</span>
+                                <span th:unless="${user.bio != null && !user.bio.isEmpty()}"
+                                      class="text-gray-400 italic">Belum diisi</span>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
 
+        <!-- Actions -->
+        <div class="px-8 py-6 bg-gray-50 border-t border-gray-100 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <a th:href="@{/profile/edit}" class="inline-flex items-center space-x-2 px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-xl shadow-sm transition-all duration-200">
+                <i data-lucide="pencil" class="w-4 h-4"></i>
+                <span>Edit Profile</span>
+            </a>
+            <a th:href="@{/change-password}" class="inline-flex items-center space-x-2 px-6 py-3 bg-primary-100 hover:bg-primary-200 text-primary-700 font-medium rounded-xl transition-all duration-200">
+                <i data-lucide="key-round" class="w-4 h-4"></i>
+                <span>Change Password</span>
+            </a>
+            <a th:href="@{/products}" class="sm:ml-auto inline-flex items-center space-x-2 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-xl transition-all duration-200">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                <span>Kembali</span>
+            </a>
         </div>
     </div>
 </div>
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 
+<script>
+    setTimeout(() => lucide.createIcons(), 100);
+</script>
 </body>
 </html>

@@ -1,93 +1,138 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: header}">
-</head>
-<body>
+<head th:replace="~{fragments/layout :: header}"></head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
 <nav th:replace="~{fragments/layout :: navbar}"></nav>
 
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <h2 th:text="${product.id != null} ? 'Edit Produk' : 'Tambah Produk Baru'" class="mb-4">Form Produk</h2>
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
 
-            <form th:action="@{/products/save}" th:object="${product}" method="post">
+    <!-- Header -->
+    <div class="mb-8">
+        <a th:href="@{/products}" class="inline-flex items-center space-x-2 text-gray-500 hover:text-primary-700 transition-colors mb-4">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <span class="text-sm font-medium">Kembali ke Daftar Produk</span>
+        </a>
+        <h1 class="text-2xl font-bold text-gray-900" th:text="${product.id != null} ? 'Edit Produk' : 'Tambah Produk Baru'">Form Produk</h1>
+    </div>
 
-                <!-- Hidden ID field -->
-                <input type="hidden" th:field="*{id}">
+    <!-- Form Card -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+        <form th:action="@{/products/save}" th:object="${product}" method="post" class="space-y-6">
+
+            <!-- Hidden ID field -->
+            <input type="hidden" th:field="*{id}">
+
+            <!-- Two Column Layout -->
+            <div class="grid md:grid-cols-2 gap-6">
 
                 <!-- Nama Produk -->
-                <div class="mb-3">
-                    <label for="name" class="form-label">Nama Produk</label>
-                    <input type="text" class="form-control" id="name" th:field="*{name}"
-                           placeholder="Masukkan nama produk" required>
+                <div class="md:col-span-2">
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
+                        Nama Produk <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" id="name" th:field="*{name}"
+                           placeholder="Masukkan nama produk" required
+                           class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200">
                 </div>
 
                 <!-- Kategori -->
-                <div class="mb-3">
-                    <label for="category" class="form-label">Kategori</label>
-                    <select class="form-select" id="category" name="category.id">
-                        <option value="">-- Pilih Kategori --</option>
-                        <option th:each="c : ${userCategories}"
-                                th:value="${c.id}"
-                                th:text="${c.name}"
-                                th:selected="${product.category != null && product.category.id == c.id}">
-                        </option>
-                    </select>
-                    <div class="form-text">
-                        <a th:href="@{/categories/new}" class="text-decoration-none" target="_blank">
-                            <i class="bi bi-plus-circle me-1"></i>Tambah kategori baru
-                        </a>
+                <div>
+                    <label for="category" class="block text-sm font-medium text-gray-700 mb-2">Kategori</label>
+                    <div class="relative">
+                        <select id="category" name="category.id"
+                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 appearance-none">
+                            <option value="">-- Pilih Kategori --</option>
+                            <option th:each="c : ${userCategories}"
+                                    th:value="${c.id}"
+                                    th:text="${c.name}"
+                                    th:selected="${product.category != null && product.category.id == c.id}">
+                            </option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                            <i data-lucide="chevron-down" class="w-5 h-5 text-gray-400"></i>
+                        </div>
                     </div>
-                </div>
-
-                <!-- Harga -->
-                <div class="mb-3">
-                    <label for="priceDisplay" class="form-label">Harga</label>
-                    <input type="hidden" th:field="*{price}">
-                    <input type="text" class="form-control" id="priceDisplay"
-                           placeholder="Masukkan harga produk" required>
-                </div>
-
-                <!-- Stok -->
-                <div class="mb-3">
-                    <label for="stock" class="form-label">Stok</label>
-                    <input type="number" class="form-control" id="stock" th:field="*{stock}"
-                           min="0" placeholder="Masukkan jumlah stok" required>
-                </div>
-
-                <!-- Deskripsi -->
-                <div class="mb-3">
-                    <label for="description" class="form-label">Deskripsi</label>
-                    <textarea class="form-control" id="description" th:field="*{description}"
-                              rows="3" placeholder="Masukkan deskripsi produk"></textarea>
-                </div>
-
-                <!-- Produk Aktif -->
-                <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="active" th:field="*{active}">
-                    <label class="form-check-label" for="active">Produk Aktif</label>
+                    <p class="mt-2">
+                        <a th:href="@{/categories/new}" class="text-sm text-primary-600 hover:text-primary-700 hover:underline inline-flex items-center space-x-1" target="_blank">
+                            <i data-lucide="plus" class="w-3 h-3"></i>
+                            <span>Tambah kategori baru</span>
+                        </a>
+                    </p>
                 </div>
 
                 <!-- Tanggal Dibuat -->
-                <div class="mb-3">
-                    <label for="createdAt" class="form-label">Tanggal Dibuat</label>
-                    <input type="date" class="form-control" id="createdAt" th:field="*{createdAt}" required>
+                <div>
+                    <label for="createdAt" class="block text-sm font-medium text-gray-700 mb-2">
+                        Tanggal Dibuat <span class="text-red-500">*</span>
+                    </label>
+                    <input type="date" id="createdAt" th:field="*{createdAt}" required
+                           class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200">
                 </div>
 
-                <!-- Buttons -->
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-primary">Simpan Produk</button>
-                    <a th:href="@{/products}" class="btn btn-secondary">Batal</a>
+                <!-- Harga -->
+                <div>
+                    <label for="priceDisplay" class="block text-sm font-medium text-gray-700 mb-2">
+                        Harga <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <span class="text-gray-400 font-medium">Rp</span>
+                        </div>
+                        <input type="hidden" th:field="*{price}">
+                        <input type="text" id="priceDisplay"
+                               placeholder="0" required
+                               class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200">
+                    </div>
                 </div>
 
-            </form>
-        </div>
+                <!-- Stok -->
+                <div>
+                    <label for="stock" class="block text-sm font-medium text-gray-700 mb-2">
+                        Stok <span class="text-red-500">*</span>
+                    </label>
+                    <input type="number" id="stock" th:field="*{stock}"
+                           min="0" placeholder="0" required
+                           class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200">
+                </div>
+
+                <!-- Produk Aktif -->
+                <div class="md:col-span-2">
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="checkbox" th:field="*{active}"
+                               class="w-5 h-5 text-primary-600 border-gray-300 rounded focus:ring-primary-500">
+                        <span class="text-sm font-medium text-gray-700">Produk Aktif</span>
+                    </label>
+                </div>
+
+                <!-- Deskripsi -->
+                <div class="md:col-span-2">
+                    <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Deskripsi</label>
+                    <textarea id="description" th:field="*{description}" rows="4"
+                              placeholder="Masukkan deskripsi produk"
+                              class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 resize-none"></textarea>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex items-center space-x-4 pt-4 border-t border-gray-100">
+                <button type="submit" class="inline-flex items-center space-x-2 px-6 py-3 bg-primary-700 hover:bg-primary-600 text-white font-medium rounded-xl shadow-sm hover:shadow-md transition-all duration-200">
+                    <i data-lucide="save" class="w-5 h-5"></i>
+                    <span>Simpan Produk</span>
+                </button>
+                <a th:href="@{/products}" class="inline-flex items-center space-x-2 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-all duration-200">
+                    <span>Batal</span>
+                </a>
+            </div>
+        </form>
     </div>
 </div>
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 
 <script>
+    setTimeout(() => lucide.createIcons(), 100);
+
     const priceHidden = document.getElementById('price');
     const priceDisplay = document.getElementById('priceDisplay');
 
@@ -100,7 +145,7 @@
         priceDisplay.value = formatThousand(priceHidden.value);
     }
 
-    // On input: format display, sync raw value to hidden, preserve cursor
+    // On input: format display, sync raw value to hidden
     priceDisplay.addEventListener('input', function () {
         const oldValue = this.value;
         const cursorPos = this.selectionStart;

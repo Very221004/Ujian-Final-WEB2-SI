@@ -1,91 +1,111 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/layout :: header}"></head>
-<body>
+<body class="bg-gray-50 min-h-screen flex flex-col">
 
 <nav th:replace="~{fragments/layout :: navbar}"></nav>
 
-<div class="container">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>
-            <i class="bi bi-tags me-2"></i>Daftar Kategori
-        </h2>
-        <a th:href="@{/categories/new}" class="btn btn-success">
-            <i class="bi bi-plus-circle me-1"></i>Tambah Kategori
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Daftar Kategori</h1>
+            <p class="text-gray-500 mt-1">Kelola kategori produk Anda</p>
+        </div>
+        <a th:href="@{/categories/new}" class="inline-flex items-center justify-center space-x-2 px-6 py-3 bg-primary-700 hover:bg-primary-600 text-white font-medium rounded-xl shadow-sm hover:shadow-md transition-all duration-200">
+            <i data-lucide="plus" class="w-5 h-5"></i>
+            <span>Tambah Kategori</span>
         </a>
     </div>
 
     <!-- Alert Messages -->
-    <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
-        <i class="bi bi-check-circle me-2"></i>
-        <span th:text="${success}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <div th:if="${success}" class="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl">
+        <div class="flex items-center space-x-3">
+            <i data-lucide="check-circle" class="w-5 h-5 text-green-600 flex-shrink-0"></i>
+            <p class="text-sm text-green-700" th:text="${success}"></p>
+        </div>
     </div>
 
-    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
-        <i class="bi bi-exclamation-circle me-2"></i>
-        <span th:text="${error}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <div th:if="${error}" class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+        <div class="flex items-center space-x-3">
+            <i data-lucide="alert-circle" class="w-5 h-5 text-red-600 flex-shrink-0"></i>
+            <p class="text-sm text-red-700" th:text="${error}"></p>
+        </div>
     </div>
 
     <!-- Search -->
-    <form method="get" th:action="@{/categories}" class="row g-2 mb-3">
-        <div class="col-md-6">
-            <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-search"></i></span>
-                <input type="text" name="keyword" class="form-control"
-                       placeholder="Cari kategori..." th:value="${keyword}">
-                <button class="btn btn-primary" type="submit">Search</button>
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+        <form method="get" th:action="@{/categories}" class="flex flex-col sm:flex-row gap-4">
+            <div class="flex-1 relative">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <i data-lucide="search" class="w-5 h-5 text-gray-400"></i>
+                </div>
+                <input type="text" name="keyword"
+                       placeholder="Cari kategori..."
+                       th:value="${keyword}"
+                       class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200">
             </div>
-        </div>
-        <div class="col-md-2">
-            <a th:href="@{/categories}" class="btn btn-outline-secondary w-100">Reset</a>
-        </div>
-    </form>
 
-    <!-- Total -->
-    <p class="text-muted">
-        Total data: <strong th:text="${totalItems}"></strong>
-    </p>
+            <button type="submit" class="px-6 py-3 bg-primary-700 hover:bg-primary-600 text-white font-medium rounded-xl shadow-sm transition-all duration-200 flex items-center justify-center space-x-2">
+                <i data-lucide="search" class="w-4 h-4"></i>
+                <span>Cari</span>
+            </button>
+
+            <a th:href="@{/categories}" class="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-all duration-200 flex items-center justify-center">
+                <span>Reset</span>
+            </a>
+        </form>
+    </div>
+
+    <!-- Total Data -->
+    <div class="flex items-center space-x-2 mb-4">
+        <i data-lucide="database" class="w-4 h-4 text-gray-400"></i>
+        <p class="text-sm text-gray-500">
+            Total data: <span class="font-semibold text-gray-700" th:text="${totalItems}">0</span>
+        </p>
+    </div>
 
     <!-- Table -->
-    <div th:if="${!#lists.isEmpty(categories)}">
-        <div class="table-responsive">
-            <table class="table table-striped table-hover">
-                <thead class="table-dark">
-                <tr>
-                    <th style="width: 50px;">No</th>
-                    <th>Nama Kategori</th>
-                    <th>Deskripsi</th>
-                    <th style="width: 150px;">Aksi</th>
+    <div th:if="${!#lists.isEmpty(categories)}" class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                <tr class="bg-primary-900 text-white">
+                    <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider w-16">No</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">Nama Kategori</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">Deskripsi</th>
+                    <th class="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider w-40">Aksi</th>
                 </tr>
                 </thead>
-                <tbody>
-                <tr th:each="cat, stat : ${categories}">
-                    <td th:text="${stat.index + 1 + (currentPage * 10)}"></td>
-                    <td>
-                        <span class="fw-bold" th:text="${cat.name}">-</span>
+                <tbody class="divide-y divide-gray-100">
+                <tr th:each="cat, stat : ${categories}" class="hover:bg-gray-50 transition-colors">
+                    <td class="px-6 py-4 text-sm text-gray-500" th:text="${stat.index + 1 + (currentPage * 10)}">1</td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+                                <i data-lucide="tag" class="w-5 h-5 text-primary-700"></i>
+                            </div>
+                            <span class="text-sm font-medium text-gray-900" th:text="${cat.name}">-</span>
+                        </div>
                     </td>
-                    <td>
-                        <span th:if="${cat.description != null && !cat.description.isEmpty()}"
-                              th:text="${cat.description}">-</span>
+                    <td class="px-6 py-4">
+                            <span th:if="${cat.description != null && !cat.description.isEmpty()}"
+                                  class="text-sm text-gray-600" th:text="${cat.description}">-</span>
                         <span th:unless="${cat.description != null && !cat.description.isEmpty()}"
-                              class="text-muted fst-italic">Tidak ada deskripsi</span>
+                              class="text-sm text-gray-400 italic">Tidak ada deskripsi</span>
                     </td>
-                    <td>
-                        <div class="btn-group btn-group-sm">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center justify-center space-x-2">
                             <a th:href="@{/categories/{id}/edit(id=${cat.id})}"
-                               class="btn btn-warning" title="Edit">
-                                <i class="bi bi-pencil"></i>
+                               class="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-100 transition-colors" title="Edit">
+                                <i data-lucide="pencil" class="w-4 h-4"></i>
                             </a>
-                            <button type="button" class="btn btn-danger"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#deleteModal"
-                                    th:data-id="${cat.id}"
-                                    th:data-name="${cat.name}"
-                                    title="Hapus">
-                                <i class="bi bi-trash"></i>
+                            <button type="button"
+                                    class="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
+                                    title="Hapus"
+                                    onclick="showDeleteModal(${cat.id}, '${cat.name}')">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
                         </div>
                     </td>
@@ -95,76 +115,83 @@
         </div>
     </div>
 
-    <!-- Empty -->
-    <div th:if="${#lists.isEmpty(categories)}" class="text-center py-5">
+    <!-- Empty State -->
+    <div th:if="${#lists.isEmpty(categories)}" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center">
         <div th:if="${keyword != null}">
-            <i class="bi bi-search display-1 text-muted"></i>
-            <p class="text-muted fs-5 mt-3">
-                Tidak ada kategori yang sesuai dengan pencarian.
-            </p>
+            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i data-lucide="search-x" class="w-10 h-10 text-gray-400"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">Tidak Ada Hasil</h3>
+            <p class="text-gray-500 mb-6">Tidak ada kategori yang sesuai dengan pencarian.</p>
+            <a th:href="@{/categories}" class="inline-flex items-center space-x-2 px-6 py-3 bg-primary-100 text-primary-700 font-medium rounded-xl hover:bg-primary-200 transition-colors">
+                <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                <span>Reset Filter</span>
+            </a>
         </div>
         <div th:if="${keyword == null}">
-            <i class="bi bi-tags display-1 text-muted"></i>
-            <p class="text-muted fs-5 mt-3">Belum ada kategori.</p>
-            <a th:href="@{/categories/new}" class="btn btn-primary">
-                <i class="bi bi-plus-circle me-1"></i>Tambah Kategori Pertama
+            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i data-lucide="tags" class="w-10 h-10 text-gray-400"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">Belum Ada Kategori</h3>
+            <p class="text-gray-500 mb-6">Mulai tambahkan kategori pertama Anda.</p>
+            <a th:href="@{/categories/new}" class="inline-flex items-center space-x-2 px-6 py-3 bg-primary-700 text-white font-medium rounded-xl hover:bg-primary-600 transition-colors">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                <span>Tambah Kategori</span>
             </a>
         </div>
     </div>
 
     <!-- Pagination -->
-    <nav th:if="${totalPages > 1}">
-        <ul class="pagination justify-content-center">
-            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                <a class="page-link"
-                   th:href="@{/categories(page=${currentPage-1}, keyword=${keyword})}">
-                    Previous
-                </a>
-            </li>
+    <nav th:if="${totalPages > 1}" class="mt-8">
+        <div class="flex items-center justify-center space-x-2">
+            <a th:href="@{/categories(page=${currentPage-1}, keyword=${keyword})}"
+               th:classappend="${currentPage == 0} ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''"
+               class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
+                <i data-lucide="chevron-left" class="w-5 h-5"></i>
+            </a>
 
-            <li class="page-item"
-                th:each="i : ${#numbers.sequence(0, totalPages-1)}"
-                th:classappend="${i == currentPage} ? 'active'">
-                <a class="page-link"
-                   th:text="${i+1}"
-                   th:href="@{/categories(page=${i}, keyword=${keyword})}">
-                </a>
-            </li>
+            <a th:each="i : ${#numbers.sequence(0, totalPages-1)}"
+               th:href="@{/categories(page=${i}, keyword=${keyword})}"
+               th:text="${i+1}"
+               th:classappend="${i == currentPage} ? 'bg-primary-700 text-white border-primary-700' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'"
+               class="inline-flex items-center justify-center w-10 h-10 rounded-xl border font-medium transition-colors">
+            </a>
 
-            <li class="page-item"
-                th:classappend="${currentPage == totalPages-1} ? 'disabled'">
-                <a class="page-link"
-                   th:href="@{/categories(page=${currentPage+1}, keyword=${keyword})}">
-                    Next
-                </a>
-            </li>
-        </ul>
+            <a th:href="@{/categories(page=${currentPage+1}, keyword=${keyword})}"
+               th:classappend="${currentPage == totalPages-1} ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''"
+               class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
+                <i data-lucide="chevron-right" class="w-5 h-5"></i>
+            </a>
+        </div>
     </nav>
-
 </div>
 
-<!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title">
-                    <i class="bi bi-exclamation-triangle me-2"></i>Konfirmasi Hapus
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+<!-- Delete Modal -->
+<div id="deleteModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20">
+        <div class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity" onclick="closeDeleteModal()"></div>
+        <div class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full mx-auto overflow-hidden transform transition-all">
+            <div class="bg-red-600 px-6 py-4">
+                <div class="flex items-center space-x-3">
+                    <i data-lucide="alert-triangle" class="w-6 h-6 text-white"></i>
+                    <h3 class="text-lg font-semibold text-white">Konfirmasi Hapus</h3>
+                </div>
             </div>
-            <div class="modal-body">
-                <p>Apakah Anda yakin ingin menghapus kategori <strong id="categoryName"></strong>?</p>
-                <p class="text-muted small">
-                    <i class="bi bi-info-circle me-1"></i>
+            <div class="px-6 py-6">
+                <p class="text-gray-700">Apakah Anda yakin ingin menghapus kategori <strong id="categoryName" class="text-gray-900"></strong>?</p>
+                <p class="text-sm text-gray-500 mt-2">
+                    <i data-lucide="info" class="w-4 h-4 inline"></i>
                     Produk yang menggunakan kategori ini akan kehilangan kategorinya.
                 </p>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+            <div class="px-6 py-4 bg-gray-50 flex items-center justify-end space-x-3">
+                <button onclick="closeDeleteModal()" class="px-6 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-xl transition-colors">
+                    Batal
+                </button>
                 <form id="deleteForm" method="post">
-                    <button type="submit" class="btn btn-danger">
-                        <i class="bi bi-trash me-1"></i>Hapus
+                    <button type="submit" class="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white font-medium rounded-xl transition-colors inline-flex items-center space-x-2">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        <span>Hapus</span>
                     </button>
                 </form>
             </div>
@@ -175,17 +202,18 @@
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 
 <script>
-    const deleteModal = document.getElementById('deleteModal');
+    setTimeout(() => lucide.createIcons(), 100);
 
-    deleteModal.addEventListener('show.bs.modal', function (event) {
-        const button = event.relatedTarget;
-        const id = button.getAttribute('data-id');
-        const name = button.getAttribute('data-name');
-
+    function showDeleteModal(id, name) {
         document.getElementById('categoryName').textContent = name;
         document.getElementById('deleteForm').action = '/categories/' + id + '/delete';
-    });
-</script>
+        document.getElementById('deleteModal').classList.remove('hidden');
+        setTimeout(() => lucide.createIcons(), 100);
+    }
 
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.add('hidden');
+    }
+</script>
 </body>
 </html>

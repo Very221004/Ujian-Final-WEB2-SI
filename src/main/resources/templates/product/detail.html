@@ -1,66 +1,109 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: header}">
-</head>
-<body>
+<head th:replace="~{fragments/layout :: header}"></head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
 <nav th:replace="~{fragments/layout :: navbar}"></nav>
 
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <h2 th:text="${product.name}" class="mb-4">Nama Produk</h2>
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
 
-            <div class="card">
-                <div class="card-body">
-                    <table class="table table-borderless mb-0">
-                        <tr>
-                            <th class="text-muted" style="width: 200px;">Nama</th>
-                            <td th:text="${product.name}">-</td>
-                        </tr>
-                        <tr>
-                            <th class="text-muted">Kategori</th>
-                            <td>
-                                    <span th:if="${product.category != null}"
-                                          class="badge bg-info"
-                                          th:text="${product.category.name}">-</span>
-                                <span th:unless="${product.category != null}" class="text-muted">-</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th class="text-muted">Harga</th>
-                            <td th:text="${'Rp ' + #numbers.formatDecimal(product.price, 0, 'POINT', 0, 'COMMA')}">Rp 0</td>
-                        </tr>
-                        <tr>
-                            <th class="text-muted">Stok</th>
-                            <td th:text="${product.stock}">0</td>
-                        </tr>
-                        <tr>
-                            <th class="text-muted">Deskripsi</th>
-                            <td th:text="${product.description}">-</td>
-                        </tr>
-                        <tr>
-                            <th class="text-muted">Status</th>
-                            <td>
-                                <span th:if="${product.active}" class="badge bg-success">Aktif</span>
-                                <span th:unless="${product.active}" class="badge bg-danger">Tidak Aktif</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th class="text-muted">Tanggal Dibuat</th>
-                            <td th:text="${product.createdAt}">-</td>
-                        </tr>
-                    </table>
+    <!-- Header -->
+    <div class="mb-8">
+        <a th:href="@{/products}" class="inline-flex items-center space-x-2 text-gray-500 hover:text-primary-700 transition-colors mb-4">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <span class="text-sm font-medium">Kembali ke Daftar Produk</span>
+        </a>
+        <h1 class="text-2xl font-bold text-gray-900" th:text="${product.name}">Nama Produk</h1>
+    </div>
+
+    <!-- Detail Card -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+
+        <!-- Status Banner -->
+        <div th:classappend="${product.active} ? 'bg-green-500' : 'bg-red-500'" class="px-8 py-3">
+            <div class="flex items-center space-x-2">
+                <i th:if="${product.active}" data-lucide="check-circle" class="w-5 h-5 text-white"></i>
+                <i th:unless="${product.active}" data-lucide="x-circle" class="w-5 h-5 text-white"></i>
+                <span class="text-sm font-medium text-white" th:text="${product.active} ? 'Produk Aktif' : 'Produk Tidak Aktif'">Status</span>
+            </div>
+        </div>
+
+        <div class="p-8">
+            <div class="grid md:grid-cols-2 gap-8">
+
+                <!-- Left Column -->
+                <div class="space-y-6">
+                    <div>
+                        <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Nama Produk</label>
+                        <p class="mt-1 text-lg font-medium text-gray-900" th:text="${product.name}">-</p>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Kategori</label>
+                        <div class="mt-1">
+                            <span th:if="${product.category != null}"
+                                  class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium bg-primary-100 text-primary-800"
+                                  th:text="${product.category.name}">-</span>
+                            <span th:unless="${product.category != null}" class="text-gray-400">-</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Harga</label>
+                        <p class="mt-1 text-2xl font-bold text-primary-700" th:text="'Rp ' + ${#numbers.formatDecimal(product.price,0,'POINT',0,'COMMA')}">Rp 0</p>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="space-y-6">
+                    <div>
+                        <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Stok</label>
+                        <p class="mt-1">
+                            <span th:classappend="${product.stock < 5} ? 'text-red-600 bg-red-100' : 'text-gray-900 bg-gray-100'"
+                                  class="inline-flex items-center px-3 py-1.5 rounded-lg text-lg font-bold"
+                                  th:text="${product.stock}">0</span>
+                            <span th:if="${product.stock < 5}" class="ml-2 text-xs text-red-500 font-medium">(Stok Rendah)</span>
+                        </p>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Tanggal Dibuat</label>
+                        <p class="mt-1 text-gray-900" th:text="${product.createdAt}">-</p>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Nilai Inventori</label>
+                        <p class="mt-1 text-lg font-bold text-gray-900" th:text="'Rp ' + ${#numbers.formatDecimal(product.price * product.stock,0,'POINT',0,'COMMA')}">Rp 0</p>
+                    </div>
                 </div>
             </div>
 
-            <div class="d-flex gap-2 mt-4">
-                <a th:href="@{/products/{id}/edit(id=${product.id})}" class="btn btn-warning">Edit</a>
-                <a th:href="@{/products}" class="btn btn-secondary">Kembali ke Daftar</a>
+            <!-- Description -->
+            <div th:if="${product.description != null && !product.description.isEmpty()}" class="mt-8 pt-6 border-t border-gray-100">
+                <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Deskripsi</label>
+                <p class="mt-2 text-gray-700 leading-relaxed" th:text="${product.description}">-</p>
+            </div>
+
+            <!-- Actions -->
+            <div class="mt-8 pt-6 border-t border-gray-100 flex items-center space-x-4">
+                <a th:href="@{/products/{id}/edit(id=${product.id})}"
+                   class="inline-flex items-center space-x-2 px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-xl shadow-sm transition-all duration-200">
+                    <i data-lucide="pencil" class="w-4 h-4"></i>
+                    <span>Edit Produk</span>
+                </a>
+                <a th:href="@{/products}"
+                   class="inline-flex items-center space-x-2 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-all duration-200">
+                    <span>Kembali ke Daftar</span>
+                </a>
             </div>
         </div>
     </div>
 </div>
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+<script>
+    setTimeout(() => lucide.createIcons(), 100);
+</script>
 </body>
 </html>
